@@ -21,7 +21,7 @@ async function joinDefaultRoom() {
         if (socket.disconnected) {
             socket.connect()
         }
-        await router.push(`/room/${userStateStore.user.roomUid}`)
+        await router.push('/room')
     }
 }
 </script>
