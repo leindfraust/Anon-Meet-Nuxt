@@ -1,5 +1,21 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  app: {
+    head: {
+      title: 'Anon Meet - chat anyone, anonymously',
+      meta: [
+        {
+          name: 'description', content: 'Anon Meet is a privacy-focused web chat application that prioritizes anonymity. Built on socket.io, it operates without a database, ensuring zero tracking or sharing of user data. Emphasizing user privacy, it offers a secure platform for seamless, anonymous communication.'
+        },
+        {
+          name: 'author', content: 'leindfraust'
+        },
+        {
+          name: 'keywords', content: 'chat, anonymous, anon meet, chat anonymous'
+        }
+      ]
+    }
+  },
   components: [
     {
       path: '~/components',
