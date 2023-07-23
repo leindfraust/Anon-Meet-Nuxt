@@ -1,12 +1,13 @@
 <template>
     <slot />
-    <footer class="footer footer-center p-10 bg-base-300 text-base-content rounded">
-        <div>
-            <div class="grid grid-flow-col gap-4">
-                <a class=" cursor-pointer"><font-awesome-icon icon="fa-brands fa-github" size="2xl" /></a>
+    <footer class="footer items-center p-8 bg-base-300 text-neutral-content">
+        <div class="items-center grid-flow-col">
+            <p>Open-source and free, created by <a class="cursor-pointer font-bold"
+                    href="https://github.com/leindfraust" target="_blank">Ronan(leindfraust)</a></p>
         </div>
-    </div>
-    <div>
-        <p>Open-source and free, created by Ronan </p>
-    </div>
-</footer></template>
+        <div class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
+            <a class=" cursor-pointer" href="https://github.com/leindfraust/Anon-Meet-Nuxt" target="_blank"><font-awesome-icon
+                    icon="fa-brands fa-github" size="2xl" /></a>
+        </div>
+    </footer>
+</template>
