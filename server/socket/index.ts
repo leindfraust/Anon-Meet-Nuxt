@@ -8,7 +8,7 @@ let roomState = [{
     clientLimit: 100,
     clients: 0,
     protected: true,
-    password: ''
+    password: false
 }] as RoomState[] //this will populate 
 
 function joinMsg(name: string) {
@@ -21,9 +21,9 @@ function uuidCreation() {
     return Math.floor(Math.random() * Date.now()).toString(16)
 }
 function roomUpdateResponse() {
-    const room = [...roomState]
-    room.forEach(room => {
-        room.password ? room.password : room.password = false
+    const room = JSON.parse(JSON.stringify(roomState))
+    room.forEach((room: RoomState) => {
+        room.password ? room.password = true : room.password = false
     })
     return room
 }
