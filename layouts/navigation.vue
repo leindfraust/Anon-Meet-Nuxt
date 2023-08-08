@@ -1,31 +1,31 @@
 <script setup lang="ts">
 import { RoomState } from 'types';
 import { useUserStoreState } from '@/stores/userState';
+import { useRoomStoreState } from '@/stores/roomState'
 
+const route = useRoute()
+const router = useRouter()
 const userStateStore = useUserStoreState()
 const socket = useSocket()
-const roomState = ref<RoomState[]>([] as RoomState[])
+const roomStateStore = useRoomStoreState()
 
 const roomUidProtected = ref('')
 
-onMounted(() => {
-    socket.on('room update', (roomUpdate: RoomState[]) => {
-        roomState.value = [...roomUpdate]
-    })
-})
-function joinRoom(room: RoomState) {
-    if (room.clients < room.clientLimit) {
+async function joinRoom(room: RoomState) {
+    if (room.clients.length < room.clientLimit && room.uid !== route.params.uid) {
         if (room.password) {
             roomUidProtected.value = room.uid
             const roomAuth = document.getElementById('roomAuth') as HTMLDialogElement
             roomAuth.showModal()
         } else {
-            socket.emit('leave room', userStateStore.user.roomUid, userStateStore.user)
-            userStateStore.user.roomUid = room.uid // update socket id connection
-            socket.emit('join room', userStateStore.user.roomUid, userStateStore.user)
+            socket.emit('leave room', route.params.uid, userStateStore.user)
+            userStateStore.user.roomUid = room.uid //update user room
+            socket.emit('join room', room.uid, userStateStore.user)
+            await router.push(`/room/${room.uid}`)
         }
     }
 }
+
 </script>
 <template>
     <label for="rooms-menu" class="block drawer-button lg:hidden p-4 bg-base-200"><font-awesome-icon icon="bars" /></label>
@@ -40,7 +40,7 @@ function joinRoom(room: RoomState) {
                 <label for="rooms-menu" class="drawer-overlay"></label>
                 <ul class="menu p-4 w-80 h-full bg-base-200 text-base-content">
                     <!-- Sidebar content here -->
-                    <li v-for="room in roomState" :key="room.uid">
+                    <li v-for="room in roomStateStore.room" :key="room.uid">
                         <a class="flow-root text-xl" @click="joinRoom(room)">
                             <span class="float-left">
                                 <div class="badge" v-if="room.protected"><font-awesome-icon icon="shield" /></div>
@@ -48,7 +48,7 @@ function joinRoom(room: RoomState) {
                                     ===
                                     'Default' ? 'Hangout' : room.name }}
                             </span>
-                            <span class="float-right"><font-awesome-icon icon="fa-solid fa-user" /> {{ room.clients
+                            <span class="float-right"><font-awesome-icon icon="fa-solid fa-user" /> {{ room.clients.length
                             }}/{{ room.clientLimit }}</span>
                         </a>
                     </li>
@@ -58,15 +58,17 @@ function joinRoom(room: RoomState) {
                                 class="text-lg">CREATE</span></button>
                     </li>
                     <div class="fixed bottom-0 p-6">
-                        <div class="flex items-center space-x-3">
-                            <div class="avatar">
+                        <div class="flex items-center space-x-12">
+                            <div class="avatar space-x-3 items-center">
                                 <div class="w-12 rounded">
                                     <img :src="`https://api.dicebear.com/6.x/adventurer-neutral/svg?seed=${userStateStore.user.uid}`"
                                         width="54" />
                                 </div>
+                                <span class="lg:text-2xl text-4xl font-bold"> {{ userStateStore.user.username }}
+                                </span>
                             </div>
-                            <span class="lg:text-2xl text-4xl font-bold"> {{ userStateStore.user.username }}
-                            </span>
+                            <nuxt-link :to="'/'"><font-awesome-icon icon="right-from-bracket" class=" text-red-500"
+                                    size="2xl" @click="" /></nuxt-link>
                         </div>
                     </div>
                 </ul>

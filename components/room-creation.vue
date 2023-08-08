@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useUserStoreState } from '@/stores/userState';
 
-
+const router = useRouter()
+const route = useRoute()
 const socket = useSocket()
 const userStateStore = useUserStoreState()
 
@@ -16,10 +17,11 @@ const password = ref('')
 //const inviteOnly = ref(false)
 
 onMounted(() => {
-    socket.on('redirect room created', (uid) => {
-        socket.emit('leave room', userStateStore.user.roomUid, userStateStore.user)
-        userStateStore.user.roomUid = uid // update socket id connection
-        socket.emit('join room', userStateStore.user.roomUid, userStateStore.user)
+    socket.on('redirect room created', async (uid) => {
+        socket.emit('leave room', route.params.uid, userStateStore.user)
+        userStateStore.user.roomUid = uid // update user room
+        socket.emit('join room', uid, userStateStore.user)
+        await router.push(`/room/${uid}`)
     })
 })
 

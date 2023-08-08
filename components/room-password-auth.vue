@@ -1,19 +1,24 @@
 <script setup lang="ts">
 import { useUserStoreState } from '@/stores/userState';
 
+const route = useRoute()
+const router = useRouter()
 const socket = useSocket()
 const password = ref('')
 const wrongPassword = ref(false)
 const userStateStore = useUserStoreState()
 const roomUid = defineModel<string>()
+
+
 onMounted(() => {
-    socket.on('correct password', () => {
+    socket.on('correct password', async () => {
         wrongPassword.value = false
-        socket.emit('leave room', userStateStore.user.roomUid, userStateStore.user)
-        userStateStore.user.roomUid = roomUid.value as unknown as string // update socket id connection
+        socket.emit('leave room', route.params.uid, userStateStore.user)
+        userStateStore.user.roomUid = roomUid.value as unknown as string // update user room
         roomUid.value = ''
-        const roomAuth = document.getElementById('roomAuth') as HTMLDialogElement
+        const roomAuth = document.getElementById("roomAuth") as HTMLDialogElement
         roomAuth.close()
+        await router.push(`/room/${roomUid.value}`)
     })
     socket.on('wrong password', () => {
         wrongPassword.value = true
