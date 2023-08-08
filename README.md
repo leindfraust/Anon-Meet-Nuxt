@@ -14,20 +14,20 @@
 <h3 align="center">Anon Meet</h3>
 
   <p align="center">
-    Anon Meet is a privacy-focused web chat application that prioritizes anonymity. It operates without a database, ensuring zero tracking or sharing of user data. The data is securely stored on the server, further enhancing the platform's security. With a strong emphasis on user privacy, Anon Meet provides a seamless and secure platform for anonymous communication.
+    Anon Meet is a privacy-focused web chat application that prioritizes anonymity. Built on socket.io, it operates without a database, ensuring zero tracking or sharing of user data. Emphasizing user privacy, it offers a secure platform for seamless, anonymous communication.
     <br />
   </p>
 </div>
 
 <!-- ABOUT THE PROJECT -->
-# Chat with total anonymity and confidence
+## About The Project
 
 ![Product Name Screen Shot][product-screenshot]
 
-## Built With
+### Built With
 
-[![Nuxt][Nuxt.js]][Nuxt-url]
-[![Socket][Socket.io]][Socket-url]
+* [![Nuxt][Nuxt.js]][Nuxt-url]
+* [![Socket][Socket.io]][Socket-url]
 
 <!-- GETTING STARTED -->
 ## Getting Started
