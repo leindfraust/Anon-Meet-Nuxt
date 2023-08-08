@@ -22,7 +22,7 @@ export default defineNuxtConfig({
       extensions: ['.vue']
     }
   ],
-  modules: ['@pinia/nuxt', 'nuxt3-socket.io'],
+  modules: ['@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt', 'nuxt3-socket.io',],
   socket: {
     serverOptions: {}
   },
