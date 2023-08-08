@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import type { RoomState } from 'types';
 import { useUserStoreState } from '@/stores/userState';
+import { useRoomStoreState } from '@/stores/roomState';
 import { ref } from 'vue'
 
 definePageMeta({ layout: 'footer' })
@@ -10,20 +12,26 @@ const username = ref('')
 const userStateStore = useUserStoreState()
 
 async function joinDefaultRoom() {
-    if (username) {
+    if (username.value) {
         userStateStore.$patch({
             user: {
                 username: username.value,
-                uid: socket.id,
-                roomUid: '1a'
+                roomUid: '1a',
             }
         })
-        if (socket.disconnected) {
-            socket.connect()
-        }
-        await router.push(`/room/${userStateStore.user.roomUid}`)
+        let user = username.value
+        socket.auth = { user }
+        socket.emit('join room', '1a', userStateStore.user)
+        await router.push('/room/1a')
     }
 }
+
+onMounted(() => {
+    if (Object.keys(userStateStore.user).length !== 0) {
+        socket.emit('leave room', userStateStore.user.roomUid, userStateStore.user)
+        userStateStore.$reset()
+    }
+})
 </script>
 <template>
     <div class="hero min-h-screen bg-base-200">

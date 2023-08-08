@@ -1,12 +1,3 @@
-export type RoomState = {
-    name: string
-    uid: string
-    clients: number
-    clientLimit: number
-    protected: boolean //room will not be destroyed even with 0 clients
-    //ttl: number <- specified amount when will the room will be automatically deleted except when the room is protected
-} & (SecureRoomState | PublicRoomState)
-
 type SecureRoomState = {
     password?: string | boolean
     /*
@@ -16,6 +7,16 @@ type SecureRoomState = {
 type PublicRoomState = {
     password: false
 }
+
+export type RoomState = {
+    name: string
+    uid: string
+    clients: string[]
+    clientLimit: number
+    protected: boolean //room will not be destroyed even with 0 clients
+    //ttl: number <- specified amount when will the room will be automatically deleted except when the room is protected
+} & (SecureRoomState | PublicRoomState)
+
 export type UserState = {
     username: string
     uid: string
@@ -25,4 +26,9 @@ export type ChatMessage = {
     senderId: string
     username: string
     message: string
+}
+
+export type UserTTL = {
+    uid: string
+    ttl: Function
 }
