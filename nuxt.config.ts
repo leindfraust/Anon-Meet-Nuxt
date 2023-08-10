@@ -22,7 +22,17 @@ export default defineNuxtConfig({
       extensions: ['.vue']
     }
   ],
-  modules: ['@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt', 'nuxt3-socket.io',],
+  modules: ['@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt', 'nuxt3-socket.io', 'nuxt-security'],
+  security: {
+    nonce: true,
+    headers: {
+      contentSecurityPolicy: {
+        'img-src': ["'self'", "data:", "https://www.dicebear.com/", "https://api.dicebear.com/"],
+        'script-src-attr': ["'unsafe-inline'"] //cannot use nonce at the moment as it is returning an error
+      },
+      crossOriginEmbedderPolicy: 'unsafe-none'
+    }
+  },
   socket: {
     serverOptions: {}
   },
