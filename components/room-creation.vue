@@ -20,7 +20,12 @@ onMounted(() => {
     socket.on('redirect room created', async (uid) => {
         socket.emit('leave room', route.params.uid, userStateStore.user)
         userStateStore.user.roomUid = uid // update user room
-        socket.emit('join room', uid, userStateStore.user)
+        if (password.value) {
+            socket.emit('join room', uid, userStateStore.user, password.value)
+        } else {
+            socket.emit('join room', uid, userStateStore.user)
+        }
+        clearFields()
         await router.push(`/room/${uid}`)
     })
 })
@@ -41,7 +46,6 @@ function createRoom() {
             clientLimit: clientLimit.value
         }
         socket.emit('room create', roomDetails, userStateStore.user.uid)
-        clearFields()
         const roomCreate = document.getElementById("roomCreate") as HTMLDialogElement
         roomCreate.close()
     } else {
