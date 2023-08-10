@@ -33,6 +33,7 @@ function autoScrollChatContainer() {
 onMounted(() => {
     //reconnect user
     if (Object.keys(roomStateStore.room).length === 0) {
+        socket.emit('leave room', userStateStore.user.roomUid, userStateStore.user)
         socket.emit('join room', route.params.uid, userStateStore.user)
     }
 
