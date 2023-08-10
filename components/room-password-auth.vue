@@ -12,15 +12,28 @@ const roomUid = defineModel<string>()
 
 onMounted(() => {
     socket.on('correct password', async () => {
+        if (roomUid.value !== route.params.uid && roomUid.value || userStateStore.user.roomUid === '') {
+            let partialLeave = true
+            let reconnLeave = false
+            if (userStateStore.user.roomUid === '') reconnLeave = true
+            socket.emit('leave room', route.params.uid, userStateStore.user, partialLeave, reconnLeave)
+            userStateStore.user.roomUid = roomUid.value as unknown as string // update user room
+            roomUid.value = ''
+            await router.push(`/room/${roomUid.value}`)
+        } else {
+            userStateStore.user.roomUid = roomUid.value as unknown as string // update user room
+            roomUid.value = ''
+        }
         wrongPassword.value = false
-        socket.emit('leave room', route.params.uid, userStateStore.user)
-        userStateStore.user.roomUid = roomUid.value as unknown as string // update user room
-        roomUid.value = ''
         const roomAuth = document.getElementById("roomAuth") as HTMLDialogElement
         roomAuth.close()
-        await router.push(`/room/${roomUid.value}`)
     })
     socket.on('wrong password', () => {
+        const roomAuth = document.getElementById("roomAuth") as HTMLDialogElement
+        if (!roomAuth.open) {
+            roomUid.value = route.params.uid as unknown as string
+            roomAuth.showModal()
+        }
         wrongPassword.value = true
     })
 })

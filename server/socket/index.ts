@@ -33,6 +33,7 @@ function roomUpdateResponse() {
 let user_ttl: UserTTL[] = []
 
 export default defineIOHandler((io) => {
+
     io.use((socket, next) => {
         const userUid = socket.handshake.auth.uid
         if (userUid) {
@@ -81,19 +82,21 @@ export default defineIOHandler((io) => {
         socket.emit('session', {
             uid: socket.data.uid
         })
+
         socket.on('disconnect', () => {
             const userUid = socket.handshake.auth.uid
             connectedUsers = connectedUsers.filter(user => user !== userUid)
         })
+
         socket.on('join room', (roomUid, socketDetails: UserState, password) => {
             if (roomState.find(room => room.uid === roomUid)) {
-                if (password) {
-                    const roomIndex = roomState.findIndex(room => room.uid === roomUid)
+                const roomIndex = roomState.findIndex(room => room.uid === roomUid)
+                if (roomState[roomIndex].password) {
                     if (roomState[roomIndex].password === password) {
                         if (!roomState[roomIndex].clients.find(uid => uid === socketDetails.uid)) {
-                            autoUserTTL(socketDetails.uid)
                             roomState[roomIndex].clients.push(socketDetails.uid)
                         }
+                        autoUserTTL(socketDetails.uid)
                         socket.join(roomUid)
                         io.to(socket.id).emit('correct password')
                         io.in(roomUid).emit('global message', joinMsg(socketDetails.username), socketDetails.uid);
@@ -102,30 +105,48 @@ export default defineIOHandler((io) => {
                         io.to(socket.id).emit('wrong password')
                     }
                 } else {
-                    const roomIndex = roomState.findIndex(room => room.uid === roomUid)
                     if (!roomState[roomIndex].clients.find(uid => uid === socketDetails.uid)) {
-                        autoUserTTL(socketDetails.uid)
                         roomState[roomIndex].clients.push(socketDetails.uid)
                     }
+                    autoUserTTL(socketDetails.uid)
                     socket.join(roomUid)
                     io.in(roomUid).emit('global message', joinMsg(socketDetails.username), socketDetails.uid);
                     io.emit('room update', roomUpdateResponse())
                 }
             }
         })
-        socket.on('leave room', (roomUid, socketDetails: UserState) => {
-            if (roomState.find(room => room.uid === roomUid)) {
-                roomState.forEach(room => {
-                    room.clients = [...room.clients.filter(uid => uid !== socketDetails.uid)]
-                })
+
+        socket.on('leave room', (roomUid, socketDetails: UserState, partialLeave: boolean, reconnLeave: boolean) => {
+            if (!partialLeave) {
+                if (roomState.find(room => room.uid === roomUid)) {
+                    roomState.forEach(room => {
+                        room.clients = [...room.clients.filter(uid => uid !== socketDetails.uid)]
+                    })
+                }
+            } else {
+                const roomIndex = roomState.findIndex(room => room.uid === roomUid)
+                if (!reconnLeave) {
+                    roomState[roomIndex].clients = roomState[roomIndex].clients.filter(uid => uid !== socketDetails.uid)
+                } else {
+                    if (roomState.find(room => room.uid === roomUid)) {
+                        roomState.forEach(room => {
+                            room.clients = [...room.clients.filter(uid => uid !== socketDetails.uid)]
+                        })
+                        roomState[roomIndex].clients.push(socketDetails.uid)
+                    }
+                }
+            }
+            if (!reconnLeave) {
                 socket.leave(roomUid)
                 io.in(roomUid).emit('global message', leaveMsg(socketDetails.username));
-                io.emit('room update', roomUpdateResponse())
+            } else {
+                autoUserTTL(socketDetails.uid)
             }
+            io.emit('room update', roomUpdateResponse())
         })
+
         socket.on('room create', (roomDetails: RoomState, uid: string) => {
             if (!roomState.find(room => room.name === roomDetails.name)) {
-                autoUserTTL(uid)
                 const uuid = uuidCreation()
                 roomState.push({
                     name: roomDetails.name,
@@ -135,10 +156,12 @@ export default defineIOHandler((io) => {
                     clientLimit: roomDetails.clientLimit,
                     clients: []
                 })
+                autoUserTTL(uid)
                 io.to(socket.id).emit('redirect room created', uuid)
                 io.emit('room update', roomUpdateResponse())
             }
         })
+
         socket.on('message', async (roomUid, socketDetails: UserState, message: ChatMessage) => {
             autoUserTTL(socketDetails.uid)
             io.in(roomUid).emit('chat message', socketDetails, message);
