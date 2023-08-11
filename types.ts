@@ -1,9 +1,16 @@
+declare global {
+    interface Window {
+        dataLayer: Record<string, any>[];
+    }
+}
+
 type SecureRoomState = {
     password?: string | boolean
     /*
     hidden: boolean
     inviteOnly: boolean*/
 }
+
 type PublicRoomState = {
     password: false
 }
@@ -22,6 +29,7 @@ export type UserState = {
     uid: string
     roomUid: string
 }
+
 export type ChatMessage = {
     senderId: string
     username: string
