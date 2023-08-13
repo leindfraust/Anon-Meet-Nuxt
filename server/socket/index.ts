@@ -51,7 +51,7 @@ export default defineIOHandler((io) => {
         connectedUsers.push(socket.data.uid)
         next()
     }).on('connection', async (socket) => {
-
+        socket.conn.once("upgrade", () => console.log('Transport upgraded to', socket.conn.transport.name))
         let timeout: NodeJS.Timeout;
         let countdown: number = 900000 //15minutes
 
