@@ -58,7 +58,7 @@ async function joinRoom(room: RoomState) {
                                 class="text-lg">CREATE</span></button>
                     </li>
                     <div class="fixed bottom-0 p-6">
-                        <div class="flex items-center space-x-12">
+                        <div class="flex items-center space-x-12 w-64 overflow-hidden hover:overflow-auto focus:overflow-auto">
                             <div class="avatar space-x-3 items-center">
                                 <div class="w-12 rounded">
                                     <img :src="`https://api.dicebear.com/6.x/adventurer-neutral/svg?seed=${userStateStore.user.uid}`"
@@ -80,3 +80,21 @@ async function joinRoom(room: RoomState) {
         <RoomPasswordAuth v-model="roomUidProtected" />
     </div>
 </template>
+<style scoped>
+::-webkit-scrollbar {
+    width: 6px;
+    border-radius: 4%;
+}
+
+::-webkit-scrollbar-track {
+    background-color: hsl(var(--b1) / var(--tw-bg-opacity, 1));
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #565555;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+</style>
