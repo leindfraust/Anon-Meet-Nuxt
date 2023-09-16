@@ -45,7 +45,7 @@ function createRoom() {
             protected: protectedRoom.value,
             clientLimit: clientLimit.value
         }
-        socket.emit('room create', roomDetails, userStateStore.user.uid)
+        socket.emit('create room', roomDetails, userStateStore.user.uid)
         const roomCreate = document.getElementById("roomCreate") as HTMLDialogElement
         roomCreate.close()
     } else {

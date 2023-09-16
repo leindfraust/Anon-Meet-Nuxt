@@ -1,5 +1,6 @@
 import type { ChatMessage, RoomState, UserState, UserTTL } from '../../types'
 import { defineIOHandler } from 'nuxt3-socket.io'
+import * as bcrypt from 'bcrypt'
 
 
 let roomState = [{
@@ -88,11 +89,23 @@ export default defineIOHandler((io) => {
             connectedUsers = connectedUsers.filter(user => user !== userUid)
         })
 
-        socket.on('join room', (roomUid, socketDetails: UserState, password) => {
+        socket.on('join room', async (roomUid: string, socketDetails: UserState, password) => {
             if (roomState.find(room => room.uid === roomUid)) {
                 const roomIndex = roomState.findIndex(room => room.uid === roomUid)
                 if (roomState[roomIndex].password) {
-                    if (roomState[roomIndex].password === password) {
+                    const validatePassword = () => {
+                        return new Promise((resolve) => {
+                            bcrypt.compare(password, roomState[roomIndex].password as string, (err, result) => {
+                                if (result && !err) {
+                                    resolve(true);
+                                } else {
+                                    resolve(false);
+                                }
+                            });
+                        });
+                    };
+
+                    if (await validatePassword()) {
                         if (!roomState[roomIndex].clients.find(uid => uid === socketDetails.uid)) {
                             roomState[roomIndex].clients.push(socketDetails.uid)
                         }
@@ -145,13 +158,22 @@ export default defineIOHandler((io) => {
             io.emit('room update', roomUpdateResponse())
         })
 
-        socket.on('room create', (roomDetails: RoomState, uid: string) => {
+        socket.on('create room', async (roomDetails: RoomState, uid: string) => {
             if (!roomState.find(room => room.name === roomDetails.name)) {
                 const uuid = uuidCreation()
+                const roomPassword = () => {
+                    return new Promise((resolve) => {
+                        if (roomDetails.password == '') resolve(false)
+                        bcrypt.hash(roomDetails.password as string, 10, (err, hash) => {
+                            if (!err) resolve(hash)
+                        })
+
+                    })
+                }
                 roomState.push({
                     name: roomDetails.name,
                     uid: uuid,
-                    password: roomDetails.password == '' ? false : roomDetails.password,
+                    password: await roomPassword() as string | boolean,
                     protected: roomDetails.protected,
                     clientLimit: roomDetails.clientLimit,
                     clients: []

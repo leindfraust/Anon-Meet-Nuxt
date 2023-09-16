@@ -15,8 +15,10 @@
     "@nuxt/devtools": "latest",
     "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
     "@tailwindcss/typography": "^0.5.9",
+    "@types/bcrypt": "^5.0.0",
     "@types/node": "^20.4.9",
     "autoprefixer": "^10.4.14",
+    "cypress": "^12.17.3",
     "daisyui": "^3.5.1",
     "nuxt": "^3.6.5",
     "nuxt-security": "^0.14.4",
@@ -28,6 +30,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/vue-fontawesome": "^3.0.3",
     "@pinia/nuxt": "^0.4.11",
+    "bcrypt": "^5.1.1",
     "nuxt3-socket.io": "^0.2.0",
     "pinia": "^2.1.6"
   }
