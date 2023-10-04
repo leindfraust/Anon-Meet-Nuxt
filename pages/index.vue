@@ -20,7 +20,6 @@ async function joinDefaultRoom() {
             }
         })
         const user = username.value
-        console.log(user)
         socket.auth = { user }
         socket.emit('join room', '1a', userStateStore.user)
         await router.push('/room/1a')
