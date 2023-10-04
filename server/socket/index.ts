@@ -9,7 +9,8 @@ let roomState = [{
     clientLimit: 100,
     clients: [],
     protected: true,
-    password: false
+    password: false,
+    ttl: () => { }
 }] as RoomState[] //this will populate 
 
 let connectedUsers: string[] = []
@@ -39,10 +40,11 @@ export default defineIOHandler((io) => {
         const userUid = socket.handshake.auth.uid
         if (userUid) {
             const session = connectedUsers.find(uid => uid === userUid)
-            if (session) {
+            if (session && userUid) {
                 socket.data.uid = userUid
                 return next()
-            } else {
+            }
+            if (!session && userUid) {
                 socket.data.uid = userUid
                 connectedUsers.push(userUid)
                 return next()
@@ -53,8 +55,8 @@ export default defineIOHandler((io) => {
         next()
     }).on('connection', async (socket) => {
         socket.conn.once("upgrade", () => console.log('Transport upgraded to', socket.conn.transport.name))
-        let timeout: NodeJS.Timeout;
-        let countdown: number = 900000 //15minutes
+        let userTimeout: NodeJS.Timeout;
+        let userCountdown: number = 900000 //15minutes
 
         async function autoUserTTL(uid: string) {
             const userTTL = user_ttl.find(user => user.uid === uid)
@@ -72,11 +74,35 @@ export default defineIOHandler((io) => {
                     }
                 })
                 const newUserTTL = user_ttl.find(user => user.uid === uid) as UserTTL
-                timeout = setTimeout(() => newUserTTL.ttl(), countdown)
+                userTimeout = setTimeout(() => newUserTTL.ttl(), userCountdown)
             } else {
                 const newUserTTL = user_ttl.find(user => user.uid === uid) as UserTTL
-                clearTimeout(timeout)
-                timeout = setTimeout(() => newUserTTL.ttl(), countdown)
+                clearTimeout(userTimeout)
+                userTimeout = setTimeout(() => newUserTTL.ttl(), userCountdown)
+            }
+        }
+
+        let roomCountdown: number = 3600000 //1 hour
+
+        async function autoRoomTTL(roomDetails: RoomState, uid: string) {
+            const roomTTL = roomState.find(room => room.uid === roomDetails.uid)
+            if (!roomTTL || typeof roomTTL === undefined) {
+                roomState.push({
+                    ...roomDetails,
+                    ttl: () => {
+                        if (!roomDetails.protected) {
+                            socket.leave(roomDetails.uid)
+                            roomState = [...roomState.filter(room => room.uid !== roomDetails.uid)]
+                            socket.join(roomState[0].uid)
+                            roomState[0].clients.push(uid) //make user join the default room
+                            io.to(socket.id).emit('force join default room')
+                            io.emit('room update', roomUpdateResponse())
+                        }
+                    }
+                })
+                const newRoomTTL = roomState.find(room => room.uid === roomDetails.uid) as RoomState
+                setTimeout(() => newRoomTTL?.ttl?.(), roomCountdown)
+                io.emit('room update', roomUpdateResponse())
             }
         }
 
@@ -170,17 +196,18 @@ export default defineIOHandler((io) => {
 
                     })
                 }
-                roomState.push({
+                const room = {
                     name: roomDetails.name,
                     uid: uuid,
                     password: await roomPassword() as string | boolean,
                     protected: roomDetails.protected,
                     clientLimit: roomDetails.clientLimit,
                     clients: []
-                })
+                }
+
+                autoRoomTTL(room, uid)
                 autoUserTTL(uid)
                 io.to(socket.id).emit('redirect room created', uuid)
-                io.emit('room update', roomUpdateResponse())
             }
         })
 
