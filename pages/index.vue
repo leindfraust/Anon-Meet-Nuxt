@@ -19,7 +19,8 @@ async function joinDefaultRoom() {
                 roomUid: '1a',
             }
         })
-        let user = username.value
+        const user = username.value
+        console.log(user)
         socket.auth = { user }
         socket.emit('join room', '1a', userStateStore.user)
         await router.push('/room/1a')
@@ -27,7 +28,7 @@ async function joinDefaultRoom() {
 }
 
 onMounted(() => {
-    if (Object.keys(userStateStore.user).length !== 0) {
+    if (!userStateStore.user.uid) {
         socket.emit('leave room', userStateStore.user.roomUid, userStateStore.user)
         userStateStore.$reset()
     }

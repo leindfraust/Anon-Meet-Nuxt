@@ -14,8 +14,9 @@ const roomStateStore = useRoomStoreState()
 const route = useRoute()
 
 onBeforeMount(() => {
-  if (Object.keys(userStateStore.user).length === 0) {
+  if (Object.keys(userStateStore.user).length === 0 || !userStateStore.user.uid) {
     socket.on('session', ({ uid }) => {
+      console.log(uid)
       socket.auth = { uid }
       userStateStore.$patch({
         user: {
