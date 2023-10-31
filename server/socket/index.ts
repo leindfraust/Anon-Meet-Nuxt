@@ -115,6 +115,10 @@ export default defineIOHandler((io) => {
             connectedUsers = connectedUsers.filter(user => user !== userUid)
         })
 
+        socket.on('get rooms', () => {
+            io.emit('rooms update', roomUpdateResponse())
+        })
+
         socket.on('join room', async (roomUid: string, socketDetails: UserState, password) => {
             if (roomState.find(room => room.uid === roomUid)) {
                 const roomIndex = roomState.findIndex(room => room.uid === roomUid)

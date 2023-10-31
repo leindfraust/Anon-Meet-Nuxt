@@ -4,11 +4,17 @@ import { useRoomStoreState } from '@/stores/roomState';
 import type { ChatMessage } from '@/types';
 definePageMeta({
     middleware: [
-        (() => {
+        ((to, from) => {
             const userStateStore = useUserStoreState()
+            const roomStateStore = useRoomStoreState()
             if (Object.keys(userStateStore.user).length === 0) {
                 return navigateTo('/')
             }
+            roomStateStore.$subscribe((mutation, state) => {
+                if (!state.room.find(room => room.uid === from.params.uid) && state.room.length !== 0) {
+                    return navigateTo('/room/1a')
+                }
+            })
         })
     ],
     layout: 'navigation'
@@ -31,8 +37,9 @@ function autoScrollChatContainer() {
 }
 
 onMounted(() => {
-    //reconnect user
-    if (Object.keys(roomStateStore.room).length === 0) {
+    //reconnect user if already joined or room does not exist
+    const currentRoomClients = roomStateStore.room.find(room => room.uid === route.params.uid)
+    if (Object.keys(roomStateStore.room).length === 0 || !currentRoomClients?.clients.find(client => client === userStateStore.user.uid)) {
         socket.emit('leave room', userStateStore.user.roomUid, userStateStore.user)
         socket.emit('join room', route.params.uid, userStateStore.user)
     }
