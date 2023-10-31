@@ -26,6 +26,11 @@ async function joinRoom(room: RoomState) {
     }
 }
 
+async function leaveRoom() {
+    socket.emit('leave room', route.params.uid, userStateStore.user)
+    await router.push('/')
+}
+
 </script>
 <template>
     <label for="rooms-menu" class="block drawer-button lg:hidden p-4 bg-base-200"><font-awesome-icon icon="bars" /></label>
@@ -58,7 +63,8 @@ async function joinRoom(room: RoomState) {
                                 class="text-lg">CREATE</span></button>
                     </li>
                     <div class="fixed bottom-0 p-6">
-                        <div class="flex items-center space-x-12 w-64 overflow-hidden hover:overflow-auto focus:overflow-auto">
+                        <div
+                            class="flex items-center space-x-12 w-64 overflow-hidden hover:overflow-auto focus:overflow-auto">
                             <div class="avatar space-x-3 items-center">
                                 <div class="w-12 rounded">
                                     <img :src="`https://api.dicebear.com/6.x/adventurer-neutral/svg?seed=${userStateStore.user.uid}`"
@@ -67,8 +73,8 @@ async function joinRoom(room: RoomState) {
                                 <span class="lg:text-2xl text-4xl font-bold"> {{ userStateStore.user.username }}
                                 </span>
                             </div>
-                            <nuxt-link :to="'/'"><font-awesome-icon icon="right-from-bracket" class=" text-red-500"
-                                    size="2xl" @click="" /></nuxt-link>
+                            <a><font-awesome-icon icon="right-from-bracket" class=" text-red-500" size="2xl"
+                                    @click="leaveRoom" /></a>
                         </div>
                     </div>
                 </ul>
