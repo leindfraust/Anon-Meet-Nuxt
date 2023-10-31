@@ -41,6 +41,10 @@ onMounted(() => {
         router.push('/')
     })
 
+    socket.on('force join default room', () => {
+        router.push('/room/1a')
+    })
+
     socket.on('global message', (msg, userId) => {
         if (userId === userStateStore.user.uid) {
             chatMessages.value = []

@@ -20,8 +20,8 @@ export type RoomState = {
     uid: string
     clients: string[]
     clientLimit: number
-    protected: boolean //room will not be destroyed even with 0 clients
-    //ttl: number <- specified amount when will the room will be automatically deleted except when the room is protected
+    protected: boolean //room will not be destroyed even with 0 clients and tt; will not work
+    ttl?: Function
 } & (SecureRoomState | PublicRoomState)
 
 export type UserState = {

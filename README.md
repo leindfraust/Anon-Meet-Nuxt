@@ -15,7 +15,6 @@
 
   <p align="center">
      Anon Meet is a privacy-focused web chat application that prioritizes anonymity. It operates without a database, ensuring zero tracking or sharing of user data. The data is securely stored on the server, further enhancing the platform's security. With a strong emphasis on user privacy, Anon Meet provides a seamless and secure platform for anonymous communication.
-    Anon Meet is a privacy-focused web chat application that prioritizes anonymity. Built on socket.io, it operates without a database, ensuring zero tracking or sharing of user data. Emphasizing user privacy, it offers a secure platform for seamless, anonymous communication.
     <br />
   </p>
 </div>
