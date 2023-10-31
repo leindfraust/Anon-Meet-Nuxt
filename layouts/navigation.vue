@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RoomState } from 'types';
+import type { RoomState } from '@/types';
 import { useUserStoreState } from '@/stores/userState';
 import { useRoomStoreState } from '@/stores/roomState'
 

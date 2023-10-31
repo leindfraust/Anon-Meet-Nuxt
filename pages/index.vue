@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { RoomState } from 'types';
 import { useUserStoreState } from '@/stores/userState';
-import { useRoomStoreState } from '@/stores/roomState';
 import { ref } from 'vue'
 
 definePageMeta({ layout: 'footer' })

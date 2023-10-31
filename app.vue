@@ -4,7 +4,7 @@
   </NuxtLayout>
 </template>
 <script setup lang='ts'>
-import type { RoomState } from 'types';
+import type { RoomState } from '@/types';
 import { useUserStoreState } from '@/stores/userState';
 import { useRoomStoreState } from '@/stores/roomState';
 

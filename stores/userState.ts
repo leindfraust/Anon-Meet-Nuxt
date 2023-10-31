@@ -1,4 +1,4 @@
-import type { UserState } from 'types'
+import type { UserState } from '@/types'
 
 export const useUserStoreState = defineStore('userState', {
     state: () => ({

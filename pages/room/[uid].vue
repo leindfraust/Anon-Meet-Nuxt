@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useUserStoreState } from '@/stores/userState'
 import { useRoomStoreState } from '@/stores/roomState';
-import { ChatMessage } from 'types';
+import type { ChatMessage } from '@/types';
 definePageMeta({
     middleware: [
         (() => {
@@ -98,8 +98,6 @@ function sendMessage() {
         <div class="flex items-center justify-center">
             <div class="fixed bottom-0 p-12 lg:w-9/12">
                 <div class="flex items-center justify-center space-x-4">
-                    <!-- <textarea class="textarea textarea-bordered textarea-lg join-item w-11/12" placeholder="Type here..."
-                        v-model="inputMessage" @keyup.enter="sendMessage"></textarea> -->
                     <input type="text" placeholder="Type here..." class="input input-lg join-item lg:w-screen xs:w-screen"
                         v-model="inputMessage" @keyup.enter="sendMessage" />
                     <font-awesome-icon icon="paper-plane" size="2xl" class=" cursor-pointer" @click="sendMessage" />
