@@ -33,7 +33,8 @@ async function leaveRoom() {
 
 </script>
 <template>
-    <label for="rooms-menu" class="block drawer-button lg:hidden p-4 bg-base-200"><font-awesome-icon icon="bars" /></label>
+    <label for="rooms-menu" class="block drawer-button lg:hidden p-4 bg-base-200"><font-awesome-icon
+            icon="bars" /></label>
     <div class="flex flex-row">
         <div class="drawer lg:drawer-open z-10 basis-0">
             <input id="rooms-menu" type="checkbox" class="drawer-toggle" />
@@ -49,12 +50,14 @@ async function leaveRoom() {
                         <a class="flow-root text-xl" @click="joinRoom(room)">
                             <span class="float-left">
                                 <div class="badge" v-if="room.protected"><font-awesome-icon icon="shield" /></div>
-                                <div class="badge" v-if="room.password"><font-awesome-icon icon="lock" /></div> {{ room.name
-                                    ===
-                                    'Default' ? 'Hangout' : room.name }}
+                                <div class="badge" v-if="room.password"><font-awesome-icon icon="lock" /></div> {{
+                                    room.name
+                                        ===
+                                        'Default' ? 'Hangout' : room.name }}
                             </span>
-                            <span class="float-right"><font-awesome-icon icon="fa-solid fa-user" /> {{ room.clients.length
-                            }}/{{ room.clientLimit }}</span>
+                            <span class="float-right"><font-awesome-icon icon="fa-solid fa-user" /> {{
+                                room.clients.length
+                                }}/{{ room.clientLimit }}</span>
                         </a>
                     </li>
                     <br />
