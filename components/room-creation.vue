@@ -17,7 +17,7 @@ const password = ref('')
 //const inviteOnly = ref(false)
 
 onMounted(() => {
-    socket.on('redirect room created', async (uid) => {
+    socket.on('redirect room created', async (uid: string) => {
         socket.emit('leave room', route.params.uid, userStateStore.user)
         userStateStore.user.roomUid = uid // update user room
         if (password.value) {
@@ -72,7 +72,8 @@ function createRoom() {
 
             </form>
             <div v-if="requiredRoomNameAlert">
-                <div class="flex items-center bg-red-500 text-white text-xs font-bold px-4 py-3 rounded-md" role="alert">
+                <div class="flex items-center bg-red-500 text-white text-xs font-bold px-4 py-3 rounded-md"
+                    role="alert">
                     <p>Room Name is required.</p>
                 </div>
                 <br />
